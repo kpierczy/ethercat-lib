@@ -1,0 +1,238 @@
+/'' ==================================================================================================================================
+ ' @file       common.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:45:16 pm
+ ' @modified   Wednesday, 8th June 2022 10:23:19 pm
+ ' @project    ethercat-lib
+ ' @brief      Class diagram of the library (ethercat::common namespace)
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+/' =========================================================== Document =========================================================== '/
+
+@startuml ethercat-lib(id=common)
+
+/' =========================================================== Namespace ========================================================== '/
+
+namespace ethercat::common {
+
+/' ===================================================== SynchronisedReference ==================================================== '/
+
+namespace synchronisation {
+
+class SynchronisedReference<T> {
+.. Data ..
+    -reference : T&
+
+==
+
+.. Copy/move semantics ..
+    +constexpr SynchronisedReference(obj : T &)
+    +constexpr ~SynchronisedReference()
+
+    +SynchronisedReference(rref : const SynchronisedReference &) = delete
+    +SynchronisedReference(rref : SynchronisedReference &&) = delete
+    +constexpr operator=(rref : const SynchronisedReference &) : SynchronisedReference &= delete
+    +constexpr operator=(rref : SynchronisedReference &&) : SynchronisedReference & = delete
+.. Getters ..
+    +constexpr get() : T&
+    +constexpr get() const : const T&
+    
+}
+
+}
+
+/' ======================================================= TranslatorWrapper ====================================================== '/
+
+namespace translation {
+
+class TranslatorTraits<TranslationDirection dir, typename TranslatorT, typename T = void> {
+.. Types ..
+    +using TranslatorType = ...
+    +using Type = ...
+    +using ArgType = ...
+.. Predicates ..
+    +static constexpr is_input_stateless : bool
+    +static constexpr is_input_statefull : bool
+    +static constexpr is_input_specialized : bool
+    +static constexpr is_input_generic : bool
+    +static constexpr handles_input_bitoffset : bool
+    +static constexpr is_output_stateless : bool
+    +static constexpr is_output_statefull : bool
+    +static constexpr is_output_specialized : bool
+    +static constexpr is_output_generic : bool
+    +static constexpr handles_output_bitoffset : bool
+}
+
+}
+
+class TranslatorWrapper<TranslationDirection dir, TranslatorT, T = void> {
+.. Types ..
+    +using Traits = ...
+    +using TranslatorType = ...
+    +using Type = ...
+    +using ArgType = ...
+.. Methods ..
+    constexpr void translate_to(data : config::Span<const uint8_t>, obj : Type&)
+    constexpr void translate_to(data : config::Span<const uint8_t>, obj : Type&, bitoffset : std::size_t)
+    constexpr void translate_from(data : config::Span<uint8_t>, obj : ArgType)
+    constexpr void translate_from(data : config::Span<uint8_t>, obj : ArgType, bitoffset : std::size_t)
+.. Static Methods ..
+    static constexpr void translate_to(data : ranges::span<const uint8_t>, obj : Type&)
+    static constexpr void translate_to(data : ranges::span<const uint8_t>, obj : Type&, bitoffset : std::size_t)
+    static constexpr void translate_from(data : ranges::span<uint8_t>, obj : ArgType)
+    static constexpr void translate_from(data : ranges::span<uint8_t>, obj : ArgType, bitoffset : std::size_t)
+}
+
+/' =========================================================== TypeBase =========================================================== '/
+
+namespace types {
+
+' NumericTypeBase class
+class NumericTypeBase {
+.. Constants ..
+    +enum ID : std::size_t
+.. Data ..
+    +id : ID
+==
+.. Helpers ..
+    +constexpr get_name() const : std::string_view
+    +constexpr get_coe_name() const : std::string_view
+    +constexpr get_bitsize() const : std::size_t
+    +constexpr get_bytesize() const : std::size_t
+}
+
+' StringTypeBase class
+class StringTypeBase {
+.. Data ..
+    +size : std::size_t
+==
+.. Helpers ..
+    +constexpr get_bitsize() const : std::size_t
+    +constexpr get_bytesize() const : std::size_t
+}
+
+' BuiltinTypeBase class
+class BuiltinTypeBase<StringT, NumericTypeBaseT, StringTypeBaseT> {
+.. Constants ..
+    +enum ID : std::size_t
+.. Data ..
+    +name : std::optional<StringT>
+    +arity : std::size_t
+    -base : std::variant<NumericTypeBaseT, StringTypeBaseT>
+
+==
+
+.. Ctors ..
+    +constexpr BuiltinTypeBase(numeric : NumericTypeBaseT, arity : std::size_t = 0)
+    +constexpr BuiltinTypeBase(name : std::string_view, numeric : NumericTypeBaseT, arity : std::size_t = 0)
+
+    +constexpr BuiltinTypeBase(str : StringTypeBaseT, arity : std::size_t = 0)
+    +constexpr BuiltinTypeBase(name : std::string_view, str : StringTypeBaseT, arity : std::size_t = 0)
+.. Traits ..
+    +constexpr is_numeric() const : bool
+    +constexpr is_string() const : bool
+    +constexpr is_scalar() const : bool
+    +constexpr is_array() const : bool
+.. Getters ..
+    +constexpr get_id() const : ID
+    +constexpr get_numeric() : NumericTypeBaseT&
+    +constexpr get_numeric() const : const NumericTypeBaseT&
+    +constexpr get_string() : StringTypeBaseT&
+    +constexpr get_string() const : const StringTypeBaseT&
+.. Helpers ..
+    +constexpr get_name() const : std::string_view
+    +constexpr get_coe_name() const : std::string_view
+    +constexpr get_bitsize() const : std::size_t
+    +constexpr get_bytesize() const : std::size_t
+}
+
+BuiltinTypeBase *-- NumericTypeBase
+BuiltinTypeBase *-- StringTypeBase
+
+' StructuralTypeBase::Subitem class
+class Subitem<template<typename> typename SubitemsCollectionT, typename StringT, typename BuiltinTypeBase> {
+    +name : StringT
+    +type : BuiltinTypeBase
+    +bitoffset : std::size_t
+}
+
+' BuiltinTypeBase class
+class StructuralTypeBase<template<typename> typename SubitemsCollectionT, typename StringT, typename BuiltinTypeBase> {
+.. Data ..
+    +name : StringT
+    +bitsize : std::size_t
+    +subitems : SubitemsCollectionT<StructuralTypeBase::Subitem>
+
+==
+
+.. Helpers ..
+    +constexpr get_bitsize() const : std::size_t
+    +constexpr get_bytesize() const : std::size_t
+}
+
+StructuralTypeBase *-- Subitem
+
+' TypeBase class
+class TypeBase<BuiltinTypeBaseT, StructuralTypeBaseT> {
+.. Constants ..
+    +enum ID : std::size_t
+.. Data ..
+    -type std::variant<BuiltinTypeBaseT, StructuralTypeBaseT>
+
+==
+
+.. Ctors ..
+    +constexpr TypeBase(builtin : const BuiltinTypeBaseT &)
+    +constexpr TypeBase(structural : const StructuralTypeBaseT &)
+.. Traits ..
+    +constexpr is_builtin() const : bool
+    +constexpr is_structural() const : bool
+.. Getters ..
+    +constexpr get_id() const : ID
+    +constexpr get_builtin() : BuiltinTypeBaseT&
+    +constexpr get_builtin() const : const BuiltinTypeBaseT&
+    +constexpr get_structural() : StructuralTypeBaseT&
+    +constexpr get_structural() const : const StructuralTypeBaseT&
+.. Helpers ..
+    +constexpr get_name() const : std::string_view
+    +constexpr get_coe_name() const : std::string_view
+    +constexpr get_bitsize() const : std::size_t
+    +constexpr get_bytesize() const : std::size_t
+
+}
+
+TypeBase *-- BuiltinTypeBase
+TypeBase *-- StructuralTypeBase
+
+}
+
+/' ============================================================ Common ============================================================ '/
+
+namespace handlers {
+
+' EventHandler class
+class EventHandler {
+.. Data ..
+    +lock : config::Lock
+    +handler : std::function<void(void)>
+
+==
+
+.. Operators ..
+    +operator()() const : void
+
+}
+
+}
+
+/' ================================================================================================================================ '/
+
+}
+
+/' ================================================================================================================================ '/
+
+@enduml

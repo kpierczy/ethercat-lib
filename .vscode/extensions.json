@@ -1,0 +1,27 @@
+{
+    "recommendations": [
+
+        // ROS
+        "ms-iot.vscode-ros",
+
+        // C++ development
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-themes",
+        "jeff-hykin.better-cpp-syntax",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools",
+
+        // Editor's sugar
+        "psioniq.psi-header",
+        "vscode-icons-team.vscode-icons",
+        "stackbreak.comment-divider",
+        "cschlosser.doxdocgen",
+        "earshinov.simple-alignment",
+
+        // Utilities
+        "tomoki1207.pdf",
+        "mads-hartmann.bash-ide-vscode",
+        "eamodio.gitlens",
+    
+    ]
+}

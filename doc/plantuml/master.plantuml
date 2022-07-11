@@ -1,0 +1,105 @@
+/'' ==================================================================================================================================
+ ' @file       master.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:45:16 pm
+ ' @modified   Friday, 10th June 2022 3:13:41 am
+ ' @project    ethercat-lib
+ ' @brief      Class diagram of the library (master class)
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+/' =========================================================== Document =========================================================== '/
+
+@startuml ethercat-lib(id=master)
+
+/' =========================================================== Namespace ========================================================== '/
+
+namespace ethercat {
+
+/' ==================================================== ProcessDataImageBuffer =================================================== '/
+
+class ProcessDataImageBuffer {
+.. Data..
+    +data : std::vector<uint8_t>
+    +lock : config::Lock
+}
+
+/' ============================================================ Master ============================================================ '/
+
+class Master<typename ImplT, typename SlaveImplT> {
+.. Private Data ..
+    -inputs : ProcessDataImageBuffer
+    -outputs : ProcessDataImageBuffer
+    -slaves : std::vector<Slave> 
+    -handlers : Handlers 
+.. Protected Data ..
+    #bus_cycle : std::chrono::microseconds
+
+==
+
+.. CPRT methods ..
+    -impl() : ImplT &
+    -impl() const : const ImplT &
+.. Private ctors ..
+    -template<typename SlaveFactoryT> \n\
+    Master(eni : enig::Configuration &&, slave_factory : SlaveFactory &&)
+.. Copy/move semantics ..
+    +Master(rmaster : const Master &) = delete
+    +Master(rmaster : Master &&) = delete
+    +operator=(rmaster : const Master &) : Master &= delete
+    +operator=(rmaster : Master &&) : Master & = delete
+.. Public ctors ..
+    +template<typename SlaveFactoryT> \n\
+    Master(eni_path : const std::filesystem::path &, slave_factory : SlaveFactory &&)
+    +template<typename SlaveFactoryT> \n\
+    Master(eni : const std::string &, slave_factory : SlaveFactory &&)
+    +template<typename SlaveFactoryT> \n\
+    Master(stream : const std::basic_istream<char> &, slave_factory : SlaveFactory &&)
+.. Cyclic I/O ..
+    +read_bus(timeout : std::chrono::milliseconds) : void
+    +write_bus(timeout : std::chrono::milliseconds) : void
+.. Bus control ..
+    +get_bus_cycle() const : std::chrono::microsecond
+
+    +get_state(timeout : std::chrono::milliseconds = 100) const : State
+    +set_state(state : State, timeout : std::chrono::milliseconds = 100) : void
+
+    +template<typename HandlerT> \n\
+    register_event_handler(event : Event, handler : HandletrT &&) : void
+    +unregister_event_handler(event : Event) : void
+.. Slaves ..
+    +list_slaves() const : std::vector<std::string_view>
+    +get_slave(name : std::string_view) : Slave<SlaveImplT> &
+    +get_slave(name : std::string_view) const : const Slave<SlaveImplT> &
+.. Helpers ..
+    +static constexpr state_to_string(state : State) : std::string_view
+    
+}
+
+Master *-- ProcessDataImageBuffer
+Master +-- ProcessDataImageBuffer
+
+' Master::Handlers class
+class master_handlers as "Handlers" {
+    +at_read_bus_start : ethercat::common::handlers::EventHandler
+    +at_read_bus_complete : ethercat::common::handlers::EventHandler
+    +at_read_bus_slaves_update_complete : ethercat::common::handlers::EventHandler
+    +at_write_bus_start : ethercat::common::handlers::EventHandler
+    +at_write_bus_slaves_update_complete : ethercat::common::handlers::EventHandler
+    +at_write_bus_complete : ethercat::common::handlers::EventHandler
+}
+
+Master          +-- master_handlers
+Master          *-- master_handlers
+master_handlers *-- ethercat::common::handlers::EventHandler
+
+/' ================================================================================================================================ '/
+
+}
+
+/' ================================================================================================================================ '/
+
+@enduml

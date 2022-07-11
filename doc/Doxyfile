@@ -1,0 +1,57 @@
+# ====================================================================================================================================
+# @file       Doxyfile
+# @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+# @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+# @date       Tuesday, 24th May 2022 1:03:12 pm
+# @modified   Monday, 11th July 2022 2:07:23 pm
+# @project    ethercat-lib
+# @brief      Configuration of the Doxygen generator
+# 
+# 
+# @copyright Krzysztof Pierczyk © 2022
+# ====================================================================================================================================
+
+# ======================================================== General settings ======================================================== #
+
+# Project info
+PROJECT_NAME   = "ethercat"
+PROJECT_NUMBER = $(ROS_DISTRO)
+PROJECT_BRIEF  = "C++ library providing implementation of the subset of abstraction defined by the EDP (EtherCAT Device Protocol)"
+
+# Compilation seetings
+GENERATE_HTML  = YES
+GENERATE_LATEX = YES
+
+# ============================================================= Sources ============================================================ #
+
+# Source files
+INPUT = ./include ./src
+# Source files config
+RECURSIVE = YES
+# Files pattern
+FILE_PATTERNS = *.hpp *.cpp
+
+# Exclude legacy code
+EXCLUDE_PATTERNS = */legacy/*
+
+# ====================================================== Documentation config ====================================================== #
+
+# Command aliases (file headers)
+ALIASES += maintainer="@par Maintainer^^"
+ALIASES += modified="@par Modified^^"
+ALIASES += project="@par Project^^"
+ALIASES += performance="@par Performance^^"
+
+# Elements extraction
+EXTRACT_PRIVATE = YES
+# Don't rearrange order of members
+SORT_MEMBER_DOCS = YES
+# Use non-standard method for generating mathematics
+USE_MATHJAX = YES
+
+# Enable macros expansion
+MACRO_EXPANSION = YES
+# Define doc-specific macros
+PREDEFINED += DOXYGEN_ONLY
+
+# ================================================================================================================================== #

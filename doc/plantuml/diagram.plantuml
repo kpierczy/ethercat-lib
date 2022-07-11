@@ -1,0 +1,35 @@
+/'' ==================================================================================================================================
+ ' @file       diagram.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:45:16 pm
+ ' @modified   Tuesday, 7th June 2022 3:24:15 pm
+ ' @project    ethercat-lib
+ ' @brief      Class diagram of the library
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+/' =========================================================== Document =========================================================== '/
+
+@startuml ethercat-lib
+
+/' ========================================================= Configuration ======================================================== '/
+
+title ethercat-lib
+hide empty description
+scale 600 width
+set namespaceSeparator ::
+
+/' =========================================================== Diagram ============================================================ '/
+
+!include common.plantuml!common
+!include descriptors.plantuml!descriptors
+!include master.plantuml!master
+!include slave.plantuml!slave
+!include types.plantuml!types
+
+/' ================================================================================================================================ '/
+
+@enduml

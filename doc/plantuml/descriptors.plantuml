@@ -1,0 +1,86 @@
+/'' ==================================================================================================================================
+ ' @file       descriptors.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:45:16 pm
+ ' @modified   Wednesday, 8th June 2022 11:17:28 pm
+ ' @project    ethercat-lib
+ ' @brief      Class diagram of the library (descriptors namespace)
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+/' =========================================================== Document =========================================================== '/
+
+@startuml ethercat-lib(id=descriptors)
+
+/' =========================================================== Namespace ========================================================== '/
+
+namespace ethercat::descriptors {
+
+/' ========================================================= TypDescriptor ======================================================== '/
+
+' NumericType class
+class NumericType
+
+ethercat::common::types::NumericTypeBase <|-- NumericType
+
+' StringType class
+class StringType
+
+ethercat::common::types::StringTypeBase <|-- StringType
+
+' BuiltinTypeDescriptor class
+class BuiltinType<StringT, NumericTypeBaseT, StringTypeBaseT>
+
+ethercat::common::types::BuiltinTypeBase <|-- BuiltinType
+BuiltinType                               *--  NumericType
+BuiltinType                               *--  StringType
+
+' BuiltinType class
+class StructuralType<template<typename> typename SubitemsCollectionT, typename StringT>
+
+ethercat::common::types::StructuralTypeBase <|-- StructuralType
+
+' Type class
+class Type<BuiltinTypeBaseT, StructuralTypeBaseT> 
+
+ethercat::common::types::TypeBase <|-- Type
+Type                               *--  BuiltinType
+Type                               *--  StructuralType
+
+/' ======================================================= ObjectDescriptor ======================================================= '/
+
+class Object<std::size_t SubitemsN> {
+.. Data ..
+    +index : uint16_t
+    +name : std::string_view
+    +type : Type
+    +subitems : std::array<Subitem, SubitemsN>
+==
+
+.. Helpers ..
+    +constexpr get_bitsize() : std::size_t
+    +constexpr get_bytesize() : std::size_t
+}
+
+Object *-- Type
+
+class Subitem {
+.. Data ..
+    +subindex : uint16_t
+    +name : std::string_view
+    +type : BuiltinType
+}
+
+Object +-- Subitem
+Object *-- Subitem
+
+/' ================================================================================================================================ '/
+
+}
+
+/' ================================================================================================================================ '/
+
+@enduml

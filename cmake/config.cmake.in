@@ -1,0 +1,14 @@
+@PACKAGE_INIT@
+
+# Compute base path
+get_filename_component(ETHERCAT_LIB_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+# Compute include dirs
+set(ETHERCAT_LIB_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Targets
+file(GLOB ETHERCAT_LIB_TARGET_FILES "${ETHERCAT_LIB_CMAKE_DIR}/*Targets.cmake")
+foreach(file ${ETHERCAT_LIB_TARGET_FILES})
+    include(${file})
+endforeach()
+
+check_required_components(EthercatLib)

@@ -1,0 +1,35 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            // Project config
+            "name": "ethercat-lib",
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "compilerPath": "/usr/bin/g++",
+            // Intellisense mode
+            "intelliSenseMode": "gcc-x86",
+            
+            // Include Paths
+            "includePath": [
+
+                /* --------------------------------- Sources --------------------------- */
+
+                "${workspaceFolder}/include",
+
+                /* ---------------------------------- System --------------------------- */
+
+                "/usr/include/x86_64-linux-gnu/c++/11",
+                "/usr/include/x86_64-linux-gnu",
+
+            ],
+            // General defines
+            "defines": [ ],
+            // Browsed directories (recursively)
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [ "${workspaceFolder}/src" ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,369 @@
+/'' ==================================================================================================================================
+ ' @file       slave.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:45:16 pm
+ ' @modified   Monday, 13th June 2022 6:16:42 am
+ ' @project    ethercat-lib
+ ' @brief      Class diagram of the library (slave-related types)
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+/' =========================================================== Document =========================================================== '/
+
+@startuml ethercat-lib(id=slave)
+
+/' =========================================================== Namespace ========================================================== '/
+
+namespace ethercat {
+
+/' ============================================================= Slave ============================================================ '/
+
+' Slave class
+class Slave {
+.. PDOs ..
+    -inputs : std::vector<Pdo<PdoDirection::Input>> 
+    -outputs : std::vector<Pdo<PdoDirection::Output>>
+.. Handlers ..
+    -handlers : drivers::Master::Handlers
+.. Configuration ..
+    #eni_description : eni::Slave
+    #name : std::string
+    #fixed_addr : uint16_t
+    #auto_increment_addr : uint16_t
+    #topological_addr : uint16_t
+
+==
+
+.. Helper private methods ..
+    -template<PdoDirection dir> \n\
+    find_pdo_entry(name : std::string_view) : std::vector<Pdo<dir>>::iterator
+    
+.. Events handling ..
+    -template<typename, typename> \n\
+    friend class drivers::Master
+    -template<PdoDirection> \n\
+    notify() : void
+
+.. Protected ctors ..
+    #Slave(
+        eni : eni::Slave,
+        inputs : std::vector<Pdo<PdoDirection::Input>> &&,
+        outputs : std::vector<Pdo<PdoDirection::Output>> &&)
+.. Copy/move semantics ..
+    +Slave(rslave : const Slave &) = delete
+    +operator=(rslave : const Slave &) : Slave &= delete
+    +Slave(rslave : Slave &&) = default
+    +operator=(rslave : Slave &&) = default
+    
+.. SDO ..
+    +template<SdoDirection dir, typename TranlatorT, typename... ArgsT> \n\
+    get_sdo(address : Sdo<dir, TranlatorT>::Address, args... : ArgsT &&...) : Sdo<dir, TranlatorT>
+    +template<SdoDirection dir, typename GenericTranlatorT, typename T, typename... ArgsT> \n\
+    get_sdo(address : Sdo<dir, GenericTranlatorT, T>::Address, args... : ArgsT &&...) : Sdo<dir, GenericTranlatorT, T>
+    +template<SdoDirection dir, typename T> \n\
+    get_sdo(address : Sdo<dir, DefaultTranlator, T>::Address) : DefaultTranslatedSdo<dir, T>
+    +template<SdoDirection dir, BuiltinType::ID type, std::size_t arity = 0> \n\
+    get_sdo(address : BuiltinTypeSdo<dir, type_id, arity>::Address) : BuiltinTypeSdo<dir, type_id, arity>
+
+    +template<SdoDirection dir, typename TranlatorT, typename... ArgsT> \n\
+    get_sdo(address : Sdo<dir, TranlatorT>::Address, args... : ArgsT &&...) const : const Sdo<dir, TranlatorT>
+    +template<SdoDirection dir, typename GenericTranlatorT, typename T, typename... ArgsT> \n\
+    get_sdo(address : Sdo<dir, GenericTranlatorT, T>::Address, args... : ArgsT &&...) : const Sdo<dirconst , GenericTranlatorT, T>
+    +template<SdoDirection dir, typename T> \n\
+    get_sdo(address : Sdo<dir, DefaultTranlator, T>::Address) const : const DefaultTranslatedSdo<dir, T>
+    +template<SdoDirection dir, BuiltinType::ID type, std::size_t arity = 0> \n\
+    get_sdo(address : BuiltinTypeSdo<dir, type_id, arity>::Address) const : const BuiltinTypeSdo<dir, type_id, arity>
+
+.. PDO ..
+    +template<PdoDirection dir> \n\
+    get_pdos() : std::vector<Pdo<dir>> &
+    +template<PdoDirection dir> \n\
+    get_pdos() const : const std::vector<Pdo<dir>> &
+    
+    +template<PdoDirection dir> \n\
+    has_pdo(name : std::string_view) const : bool
+    +template<PdoDirection dir> \n\
+    get_pdo(name : std::string_view) : Pdo<dir> &
+    +template<PdoDirection dir> \n\
+    get_pdo(name : std::string_view) const : const Pdo<dir> &
+
+    +template<PdoDirection dir> \n\
+    get_pdo_entry(name : std::string_view) : Pdo<dir>::Entry &
+    +template<PdoDirection dir> \n\
+    get_pdo_entry(name : std::string_view) const : const Pdo<dir>::Entry &
+
+.. Configruation getters ..
+    +get_eni() const : eni::Slave
+    +get_name() const : std::string_view
+    +get_fixed_addr() const : uint16_t
+    +get_auto_increment_addr() const : uint16_t
+    +get_topological_addr() const : uint16_t
+.. Slave controlls ..
+    +get_state(timeout : std::chrono::milliseconds) : Slave::State
+    +set_state(state : Slave::State, timeout : std::chrono::milliseconds) : void
+.. Event handlers ..
+    +template<typename HandlerT> register_event_handler(event : Slave::Event, handler : HandletrT &&) : void
+    +unregister_event_handler(event : Slave::Event) : void
+    
+.. Helper static methods ..
+    +static constexpr state_to_string(state : Slave::State) : std::string_view
+    
+}
+
+Master *-- Slave
+Slave  *-- Pdo
+
+' Slave::Handlers class
+class slave_handlers as "Handlers" {
+    +at_inputs_update : ethercat::common::handlers::EventHandler
+    +at_outputs_update : ethercat::common::handlers::EventHandler
+}
+
+Slave           +-r- slave_handlers
+Slave           *-r- slave_handlers
+slave_handlers <|-r- ethercat::common::handlers::EventHandler
+
+/' ============================================================== SDO ============================================================= '/
+
+' Enum SdoDirection
+enum SdoDirection {
+    Upload
+    Download
+}
+
+Slave +-l- SdoDirection
+Slave  -l- SdoDirection
+
+' Sdo class
+class Sdo<Slave::SdoDirection dir, typename TranslatorT, typename T = void> {
+.. Data ..
+    - slave : Slave*
+    - address : Address
+    
+==
+
+.. Ctors..
+    Sdo(slave : Slave*, adress : Address)
+    Sdo(slave : Slave*, adress : Address, args... : ArgsT...)
+
+.. Methods ..
+    get_address() const : Address
+.. Downloading ..
+    +download(\n\
+        object : SizingTranslatorTraits<TranslatorT, T>::ArgType,\n\
+        timeout : std::chrono::milliseconds\n\,
+        access_type : AccessType = AccessType::Limited
+    ) : void
+    
+.. Uploading ..
+    +upload(\n\
+        timeout : std::chrono::milliseconds\n\,
+        access_type : AccessType = AccessType::Limited
+    ) const : SizingTranslatorTraits<TranslatorT, T>::Type
+    +upload(\n\
+        object : SizingTranslatorTraits<TranslatorT, T>::Type&,\n\
+        timeout : std::chrono::milliseconds\n\,
+        access_type : AccessType = AccessType::Limited
+    ) const : SizingTranslatorTraits<TranslatorT, T>::Type
+
+}
+
+Slave                                                  +-l- Sdo
+Slave                                                   -l- Sdo
+ethercat::common::translation::SizingTranslatorWrapper <|-- Slave
+
+' Address class
+class Address {
+.. Data ..
+    +index : uint16_t
+    +subindex : uint16_t = 0
+}
+
+Sdo +-- Address
+Sdo  -- Address
+
+/' ============================================================== PDO ============================================================= '/
+
+' Enum PdoDirection
+enum PdoDirection {
+    Input
+    Tx
+    Output
+    Rx
+}
+
+Slave +-- PdoDirection
+Slave  -- PdoDirection
+
+' Pdo class
+class Pdo<PdoDirection dir> {
+.. Data ..
+    -name : std::string 
+    -entries : std::vector<Pdo::Entry>
+
+==
+
+    -template<ImplT, SlaveImplT>\n\
+    friend class Master<ImplT, SlaveImplT>
+    
+.. Protected ctors ..
+    #Pdo(\n\
+        pdo_description : eni::Slave::Pdo,\n\
+        pdi_variables : const eni::ProcessImage::VariablesList &
+    )
+.. Copy/move semantics ..
+    +Pdo(rpdo : const Pdo &) = delete
+    +operator=(rpdo : const Pdo &) : Pdo & = delete
+    +Pdo(rpdo : Pdo &&) = default
+    +operator=(rpdo : Pdo &&) : Pdo & = default
+
+.. Getters ..
+    +get_name() const : std::string_view
+    +get_entries() : std::vector<Pdo::Entry> &
+    +get_entries() const : const std::vector<Pdo::Entry> &
+    +has_entry(name : std::string_view) const : bool
+    +get_entry(name : std::string_view) : Entry &
+    +get_entry(name : std::string_view) const : const Entry &
+
+}
+
+Slave        +-- Pdo
+Slave        *-- Pdo
+PdoDirection <-- Pdo
+
+/' ========================================================== Pdo::Entry ========================================================== '/
+
+' Entry class
+class Entry {
+.. Configuration ..
+    -name : std::string
+    -type : ethercat::Type 
+.. Content ..
+    -buffer : Buffer
+
+==
+
+    -friend class Pdo;
+    -template<SlaveImplT>\n\
+    friend class Slave<SlaveImplT>
+    -template<ImplT, SlaveImplT>\n\
+    friend class Master<ImplT, SlaveImplT>
+
+.. Protected ctors ..
+    #Entry(description : eni::Slave::Pdo::Entry, pdi_variable : eni::ProcessImage::Variable)
+.. Copy/move semantics ..
+    +Entry(rentry : const Entry &) = delete
+    +operator=(rentry : const Entry &) : Entry & = delete
+    +Entry(rentry : Entry &&) = default
+    +operator=(rentry : Entry &&) : Entry & = default
+
+.. Configuration getters ..
+    +get_name() const : std::strin_view
+    +get_type() const : const ethercat::Type &
+
+.. References ..
+
+    +template<typename TranlatorT, typename... ArgsT> \n\
+    get_reference(args... : ArgsT &&...) : Reference<TranlatorT>
+    +template<typename GenericTranlatorT, typename T, typename... ArgsT> \n\
+    get_reference(args... : ArgsT &&...) : Reference<TranlatorT, T>
+    +template<typename T> \n\
+    get_reference() : TypeReference<T>
+    +template<BuiltinType::ID type, std::size_t arity = 0> \n\
+    get_reference() : BuiltinTypeReference<type, arity>
+
+    +template<typename TranlatorT, typename... ArgsT> \n\
+    get_reference(args... : ArgsT &&...) const : const Reference<TranlatorT>
+    +template<typename GenericTranlatorT, typename T, typename... ArgsT> \n\
+    get_reference(args... : ArgsT &&...) const : const Reference<TranlatorT, T>
+    +template<typename T> \n\
+    get_reference() const : const TypeReference<T>
+    +template<BuiltinType::ID type, std::size_t arity = 0> \n\
+    get_reference() const : const BuiltinTypeReference<type, arity>
+
+.. Private methods ..
+    -update(pdi : config::types::Span<const uint8_t>) : void
+    -update(pdi : config::types::Span<uint8_t>) : void
+}
+
+Pdo +-- Entry
+Pdo *-- Entry
+
+class Buffer {
+.. Data..
+    -lock : ethercat::config::QuickLock
+    +buffer : std::vector<uint8_t>
+    +bitsize : std::size_t
+    -bitoffset : std::size_t
+
+==
+
+    -friend class Pdo<dir>::Entry
+    
+.. Ctors ..
+    #Buffer(bitsize : std::size_t, bitoffset : std::size_t)
+.. Move/copy semantics ..
+    +Buffer(rbuffer : const Buffer &) = delete
+    +operator=(rbuffer : const Buffer &) : Buffer & = delete
+    +Buffer(rbuffer : Buffer &&)
+    +operator=(rbuffer : Buffer &&) : Buffer &
+
+.. Getters ..
+    +update(pdi : config::types::Span<const uint8_t>) : void
+    +update(pdi : config::types::Span<uint8_t>) : void
+}
+
+Entry +-- Buffer
+Entry *-- Buffer
+
+/' ==================================================== Pdo::Entry (references) =================================================== '/
+
+' Pdo::Entry::Reference class
+class Reference<TranslatorT, T> {
+.. Data ..
+    -buffer : Pdo<dir>::Entry::Buffer &
+==
+
+.. Protected ctors ..
+    #Reference(type : const types::Type&, buffer : Pdo<dir>::Entry::Buffer &)
+    #template<typename... ArgsT>\n\
+    Reference(type : const types::Type&, buffer : Pdo<dir>::Entry::Buffer &, args... : ArgsT...)
+.. Copy/move semantics ..
+    +Reference(rdispatcher : const Reference &) = default
+    +operator=(rdispatcher : const Reference &) : Reference & = default
+    +Reference(rdispatcher : Reference &&) = default
+    +operator=(rdispatcher : Reference &&) : Reference & = default
+
+.. Getters/setters ..
+    +get() const : Type
+    +get(object : Type &) const : void
+    +set(object : const Type &) : void
+    
+}
+
+ethercat::common::translation::TranslatorWrapper <|-- Reference
+Entry                                             *-- Reference
+Entry                                             +-- Reference
+
+' Pdo::Entry::TypeReference class
+class TypeReference<TranslatorT, T>
+
+Reference <|-- TypeReference
+Handler             +--  TypeReference
+
+' Pdo::Entry::BuiltinTypeDispatcher class
+class BuiltinTypeReference<TranslatorT, T>
+
+TypeReference <|-- BuiltinTypeReference
+Handler       +--  BuiltinTypeReference
+
+/' ================================================================================================================================ '/
+
+}
+
+/' ================================================================================================================================ '/
+
+@enduml

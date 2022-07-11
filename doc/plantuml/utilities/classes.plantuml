@@ -1,0 +1,227 @@
+/'' ==================================================================================================================================
+ ' @file       classes.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:47:24 pm
+ ' @modified   Monday, 6th June 2022 7:47:49 pm
+ ' @project    ethercat-lib
+ ' @brief      Helper procedures generating classes inside UML diagrams
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+@startuml
+
+/' =========================================================== Functions ========================================================== '/
+
+/''
+ ' @brief Calculates position of the last space in the string
+ ' @param string 
+ '    string to be parsed
+ '/
+!function get_last_space_pos($string)
+
+    ' Check if space is present
+    !if %strpos($string, " ") == (0 - 1)
+        !return (0 - 1)
+    !endif
+
+    ' Find the last space in the expression
+    !local $last_space_pos = 0
+    !local $parsed_string = $string
+    ' Trimm opening spaces
+    !while %strpos(%substr($parsed_string, 0, 1), " ") != (0 - 1)
+        !$parsed_string = ($parsed_string, 1)
+    !endwhile
+    ' Extract return value    
+    !while %strpos($parsed_string, " ") != (0 - 1)
+        !$last_space_pos = $last_space_pos + %strpos($parsed_string, " ") + 1
+        !$parsed_string = %substr($parsed_string, %strpos($parsed_string, " ") + 1)
+    !endwhile
+    ' Return result
+    !return $last_space_pos - 1
+
+!endfunction
+
+/''
+ ' @brief Parses return value of the function
+ ' @param fun 
+ '    function string to be parsed
+ '/
+!function parse_fun_ret_value($fun)
+
+    ' Get everything before beggining of parameters list
+    !local $fun_without_param_list_end = %strpos($fun, "(")
+    !local $fun_without_param_list = %substr($fun, 0, $fun_without_param_list_end)
+    ' Get last space in the substring
+    !local $last_space_pos = get_last_space_pos($fun_without_param_list)
+    !if $last_space_pos == (0 - 1)
+        !return $fun_without_param_list
+    !endif
+    ' Return parse value
+    !return %substr($fun_without_param_list, 0, $last_space_pos)
+    
+!endfunction
+
+/''
+ ' @brief Parses name of the function
+ ' @param fun 
+ '    function string to be parsed
+ '/
+!function parse_fun_name($fun)
+
+    ' Get everything before beggining of parameters list
+    !local $fun_without_param_list_end = %strpos($fun, "(")
+    !local $fun_without_param_list = %substr($fun, 0, $fun_without_param_list_end)
+    ' Get last space in the substring
+    !local $last_space_pos = get_last_space_pos($fun_without_param_list)
+    !if $last_space_pos == (0 - 1)
+        !return $fun_without_param_list
+    !endif
+    ' Return parse value
+    !return %substr($fun_without_param_list, $last_space_pos)
+    
+!endfunction
+
+/''
+ ' @brief Parses list of arguments of the function
+ ' @param fun 
+ '    function string to be parsed
+ '/
+!function parse_fun_args($fun)
+
+    ' Get limits of the arguments list
+    !local $params_begin = %strpos($fun, "(")
+    !local $params_end = %strpos($fun, ")")
+    ' Return parse value
+    !return %substr($fun, $params_begin + 1, ($params_end - $params_begin - 1))
+    
+!endfunction
+
+/''
+ ' @brief Parses closing specifier of the function
+ ' @param fun 
+ '    function string to be parsed
+ '/
+!function parse_fun_specifier($fun)
+
+    ' Get limits of the arguments list
+    !local $params_end = %strpos($fun, ")")
+    ' Return parse value
+    !return %substr($fun, $params_end + 1)
+    
+!endfunction
+
+/''
+ ' @brief Expands comma-separated list of arguments into multiline string
+ ' @param fun 
+ '    function string to be parsed
+ '/
+!function expand_params($params, $delimiter=",")
+
+    !local $indendation = "   "
+
+    ' Check if params list ends with delimiter
+    !local $ends_with_delimiter = 0
+    !if %substr($params, %size($params) - 1, 1) == $delimiter
+        !$ends_with_delimiter = 1
+    !endif
+    ' Initialize function
+    !local $params_expanded = ""
+    ' Parse arguments in loop
+    !while %size($params) != 0
+        ' Find end of the parameter
+        !local $arg_end = %strpos($params, $delimiter)
+        ' Check if last element has been found; concatenate arguments; trim processed part of string
+        !if $arg_end != (0 - 1)
+            !$params_expanded = $params_expanded + $indendation + %substr($params, 0, $arg_end) + $delimiter + " \n"
+            !$params = %substr($params, $arg_end + 2)
+        !else
+            ' If string DOES NOT ends with delimiter, add the last intendation
+            !if $ends_with_delimiter == 0
+                !$params_expanded = $params_expanded + $indendation
+            !endif
+            ' Add rest of the string to the expanded string
+            !$params_expanded = $params_expanded + $params
+            ' End loop
+            !$params = ""
+        !endif
+    !endwhile
+    ' Return result
+    !return %string($params_expanded)
+
+!endfunction
+
+/' ========================================================== Procedures ========================================================== '/
+
+/''
+ ' @brief Prints method with short arguments list
+ ' @param fun 
+ '    function string
+ '/
+!procedure $method($fun)
+\
+    !local $return    = parse_fun_ret_value($fun)
+    !local $name      = parse_fun_name($fun)
+    !local $params    = parse_fun_args($fun)
+    !local $specifier = parse_fun_specifier($fun)
+\
+    {method} $return **$name**($params) $specifier
+!endprocedure
+
+/''
+ ' @brief Prints constructor with short arguments list
+ ' @param fun 
+ '    function string
+ '/
+!procedure $constructor($fun)
+\
+    !local $name   = parse_fun_name($fun)
+    !local $params = parse_fun_args($fun)
+\
+    {method} **$name**($params)
+!endprocedure
+
+/''
+ ' @brief Prints method with long arguments list
+ ' @param fun 
+ '    function string
+ '/
+!procedure $lmethod($fun)
+\
+    !local $return    = parse_fun_ret_value($fun)
+    !local $name      = parse_fun_name($fun)
+    !local $params    = parse_fun_args($fun)
+    !local $specifier = parse_fun_specifier($fun)
+\
+    {method} $return **$name**(%string("\n" + expand_params($params) + "\n")) $specifier
+!endprocedure
+
+/''
+ ' @brief Prints constructor with long arguments list
+ ' @param fun 
+ '    function string
+ '/
+!procedure $lconstructor($fun)
+\
+    !local $name      = parse_fun_name($fun)
+    !local $params    = parse_fun_args($fun)
+\
+    {method} **$name**(%string("\n" + expand_params($params) + "\n"))
+!endprocedure
+
+/' ========================================================== Procedures ========================================================== '/
+
+/''
+ ' @brief Prints structure in a multiline fashion
+ ' @param list 
+ '    ;-separated list of members
+ '/
+!procedure $lstruct($list)
+    {field} struct{%string("\n" + expand_params($list, ";"))}
+!endprocedure
+
+/' ================================================================================================================================ '/
+
+@enduml

@@ -1,0 +1,65 @@
+/'' ==================================================================================================================================
+ ' @file       types.plantuml
+ ' @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
+ ' @date       Monday, 6th June 2022 7:45:16 pm
+ ' @modified   Thursday, 9th June 2022 2:45:17 am
+ ' @project    ethercat-lib
+ ' @brief      Class diagram of the library (CoE objects' types definitions)
+ ' 
+ ' 
+ ' @copyright Krzysztof Pierczyk © 2022
+ ' ================================================================================================================================ '/
+
+/' =========================================================== Document =========================================================== '/
+
+@startuml ethercat-lib(id=types)
+
+/' =========================================================== Namespace ========================================================== '/
+
+namespace ethercat {
+
+/' ============================================================= Type ============================================================= '/
+
+' NumericType class
+class NumericType
+
+ethercat::common::types::NumericTypeBase <|-- NumericType
+
+' StringType class
+class StringType
+
+ethercat::common::types::StringTypeBase <|-- StringType
+
+' BuiltinType class
+class BuiltinType {
+.. Static helpers ..
+    +static parse(type_string : std::string_view) : std::optional<BuiltinType>
+}
+
+ethercat::common::types::BuiltinTypeBase <|-- BuiltinType
+BuiltinType                              *--  NumericType
+BuiltinType                              *--  StringType
+
+' BuiltinType class
+class StructuralType
+
+ethercat::common::types::StructuralTypeBase <|-- StructuralType
+
+' Type class
+class Type {
+.. Helpers ..
+    +get_name() const : std::string
+}
+
+ethercat::common::types::TypeBase <|-- Type
+Type                               *--  BuiltinType
+Type                               *--  StructuralType
+
+/' ================================================================================================================================ '/
+
+}
+
+/' ================================================================================================================================ '/
+
+@enduml
