@@ -3,11 +3,11 @@
  * @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @date       Wednesday, 25th May 2022 7:37:33 pm
- * @modified   Monday, 11th July 2022 9:01:55 pm
+ * @modified   Wednesday, 25th June 2025 3:15:10 pm
  * @project    ethercat-lib
  * @brief      Example interface of the class implementing abstract EtherCAT slave driver provided by the @a ethercat library
- * 
- * 
+ *
+ *
  * @copyright Krzysztof Pierczyk © 2022
  */// ============================================================================================================================= */
 
@@ -24,7 +24,7 @@ namespace ethercat::impl {
 /* ======================================================== Implementation ======================================================== */
 
 /**
- * @brief Example interface of the class implementing abstract EtherCAT slave driver 
+ * @brief Example interface of the class implementing abstract EtherCAT slave driver
  *    provided by the @a ethercat library
  */
 class Slave : public ethercat::Slave<Slave> {
@@ -36,28 +36,28 @@ protected: /* ------------------------------ Protected EtherCAT common methods (
 
     /**
      * @brief Reads current state of the slave device in the ESM (EtherCAT slave machine)
-     * 
-     * @param timeout 
+     *
+     * @param timeout
      *    access timeout
-     * @returns 
+     * @returns
      *    current state of the slave device in the ESM (EtherCAT slave machine)
-     * 
-     * @throws cifx::Error 
+     *
+     * @throws cifx::Error
      *    on error
      * @throws std::range_error
      *    if invalid state identifier has been returned by the hardware
      */
     State get_state_impl(std::chrono::milliseconds timeout);
-    
+
     /**
      * @brief Requestes state change of the slave device in the ESM (EtherCAT slave machine)
-     * 
-     * @param state 
+     *
+     * @param state
      *    target state
-     * @param timeout 
+     * @param timeout
      *    access timeout
-     * 
-     * @throws cifx::Error 
+     *
+     * @throws cifx::Error
      *    on error
      * @throws std::range_error
      *    if invalid state has been requested
@@ -68,16 +68,16 @@ protected: /* --------------------------------------------- Protected ctors & dt
 
     /**
      * @brief Construct a new Slave interface
-     * 
+     *
      * @param channel
      *    reference tot he CIFX channel used to communicate with CIFX master device
-     * @param slave_eni 
+     * @param slave_eni
      *    parsing interface for the slave's description present in ENI file
-     * @param inputs 
+     * @param inputs
      *    input PDOs associated with the slave
-     * @param outputs 
+     * @param outputs
      *    output PDOs associated with the slave
-     * 
+     *
      * @throws cifx::ethercat::eni::Error
      *    if initialization fails for some reason
      */
@@ -96,44 +96,44 @@ protected: /* -------------------------------------- Protected implementation me
 
     /**
      * @brief Type-independent implementation of the @ref download_sdo(...) method template
-     * 
-     * @param index 
+     *
+     * @param index
      *    index of the object
-     * @param subindex 
+     * @param subindex
      *    subindex of the object
-     * @param data 
+     * @param data
      *    data to be written into the object
-     * @param timeout 
+     * @param timeout
      *    access timeout
-     * @param complete_access 
+     * @param complete_access
      *    @c true if complete access is to be performed
      */
     void download_sdo(
         uint16_t index,
         uint16_t subindex,
-        ranges::span<const uint8_t> data,
+        std::span<const uint8_t> data,
         std::chrono::milliseconds timeout,
         bool complete_access
     );
-    
+
     /**
      * @brief Type-independent implementation of the @ref upload_object(...) method template
-     * 
-     * @param index 
+     *
+     * @param index
      *    index of the object
-     * @param subindex 
+     * @param subindex
      *    subindex of the object
-     * @param[inout] data 
+     * @param[inout] data
      *    data to be written into the object
-     * @param timeout 
+     * @param timeout
      *    access timeout
-     * @param complete_access 
+     * @param complete_access
      *    @c true if complete access is to be performed
      */
     void upload_sdo(
         uint16_t index,
         uint16_t subindex,
-        ranges::span<uint8_t> data,
+        std::span<uint8_t> data,
         std::chrono::milliseconds timeout,
         bool complete_access
     );

@@ -3,7 +3,7 @@
 # @author     Dirk Thomas
 # @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @date       Wednesday, 27th April 2022 6:50:23 pm
-# @modified   Monday, 11th July 2022 9:46:37 pm
+# @modified   Wednesday, 25th June 2025 3:21:24 pm
 # @project    ethercat-lib
 # @brief      Defines `add_standard_test` macro
 # ====================================================================================================================================
@@ -21,13 +21,13 @@ find_package(GTest REQUIRED)
 #    target name
 # @param src [NAMES...]
 #    list of source files
-# @param COMMAND_SUFFIX [STR] 
+# @param COMMAND_SUFFIX [STR]
 #    test run command suffix
 # ---------------------------------------------------------------------------------------
 macro(add_standard_test target)
 
     enable_testing()
-    
+
     # -------------------------- Parse arguments -------------------------
 
     # Single-value arguments
@@ -53,9 +53,10 @@ macro(add_standard_test target)
     # Add GTest include directories
     target_include_directories("${target}" BEFORE PUBLIC "${GTEST_INCLUDE_DIRS}")
     # Link GTest Main
-    target_link_libraries("${target}" ${GTEST_MAIN_LIBRARIES})
-    # Link GTest libraries
-    target_link_libraries("${target}" ${GTEST_LIBRARIES})
+    target_link_libraries("${target}"
+        GTest::gtest
+        GTest::gtest_main
+    )
 
     # Prepare path to the executable
     set(executable "$<TARGET_FILE:${target}>")

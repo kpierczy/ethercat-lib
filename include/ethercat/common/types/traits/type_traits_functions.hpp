@@ -3,11 +3,11 @@
  * @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @date       Friday, 3rd June 2022 2:31:16 pm
- * @modified   Monday, 11th July 2022 2:07:23 pm
+ * @modified   Wednesday, 25th June 2025 3:15:05 pm
  * @project    ethercat-lib
  * @brief      Definition of auxiliary functions related to TypeTraits traits
- * 
- * 
+ *
+ *
  * @copyright Krzysztof Pierczyk © 2022
  */// ============================================================================================================================= */
 
@@ -29,7 +29,7 @@ namespace ethercat::common::types::traits {
 /* ================================================== Type traits functions ================================================ */
 
 template<typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr std::string_view value_type_name(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
         return TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::value_type_name;
@@ -38,7 +38,7 @@ constexpr std::string_view value_type_name(TypeIdEnum type_id) {
 
 
 template<std::size_t N, typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr std::string_view name(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
         return TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::names[N];
@@ -47,10 +47,10 @@ constexpr std::string_view name(TypeIdEnum type_id) {
 
 
 template<typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr auto names(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
-        return ranges::span( 
+        return std::span(
             TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::names.data(),
             TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::names.size()
         );
@@ -59,7 +59,7 @@ constexpr auto names(TypeIdEnum type_id) {
 
 
 template<std::size_t N, typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr std::string_view coe_name(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
         return TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::coe_names[N];
@@ -68,10 +68,10 @@ constexpr std::string_view coe_name(TypeIdEnum type_id) {
 
 
 template<typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr auto coe_names(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
-        return ranges::span( 
+        return std::span(
             TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::coe_names.data(),
             TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::coe_names.size()
         );
@@ -80,7 +80,7 @@ constexpr auto coe_names(TypeIdEnum type_id) {
 
 
 template<typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr std::size_t bytesize(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
         return TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::bytesize;
@@ -89,7 +89,7 @@ constexpr std::size_t bytesize(TypeIdEnum type_id) {
 
 
 template<typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr std::size_t bitsize(TypeIdEnum type_id) {
     return boost::mp11::mp_with_index<types::TYPES_NUM>( utilities::to_underlying(type_id), [&](auto I){
         return TypeTraits<utilities::to_enum<TypeIdEnum>(I)>::bitsize;
@@ -98,7 +98,7 @@ constexpr std::size_t bitsize(TypeIdEnum type_id) {
 
 
 template<typename TypeIdEnum,
-    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool> = true>
+    std::enable_if_t<std::is_enum_v<TypeIdEnum>, bool>>
 constexpr std::size_t type_index(TypeIdEnum type_id) {
     return utilities::to_underlying(type_id);
 }

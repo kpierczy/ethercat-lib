@@ -3,11 +3,11 @@
  * @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @date       Wednesday, 18th May 2021 1:54:23 am
- * @modified   Monday, 11th July 2022 2:07:23 pm
+ * @modified   Wednesday, 25th June 2025 3:19:41 pm
  * @project    ethercat-lib
  * @brief      Unit tests for the default parser of binary data
- * 
- * 
+ *
+ *
  * @copyright Krzysztof Pierczyk © 2022
  * @todo Condition tests depending on the current configuration of the library
  */// ============================================================================================================================= */
@@ -33,9 +33,9 @@ using namespace ethercat::common::translation;
 constexpr auto log_start = "[    LOG   ] ";
 
 /// Auxiliary logger class
-struct Log { 
-    template<typename T>    
-    std::ostream &operator<<(T &&v) { return (std::cout << log_start << v); } 
+struct Log {
+    template<typename T>
+    std::ostream &operator<<(T &&v) { return (std::cout << log_start << v); }
 };
 
 /// Auxiliary logger instance
@@ -220,7 +220,7 @@ TEST(DefaultParserTest, BoolArray) {
         OFFSET  (std::size_t { 3                                }),
         EXPECTED(            { 0x8,   0x0,   0x8,    0x0,   0x0 })
     )
-    
+
 }
 
 TEST(DefaultParserTest, BoolVector) {
@@ -260,7 +260,7 @@ TEST(DefaultParserTest, BoolVector) {
         OFFSET  (std::size_t { 3                                }),
         EXPECTED(            { 0x8,   0x0,   0x8,    0x0,   0x0 })
     )
-    
+
 }
 
 /* ================================================================================================================================ */

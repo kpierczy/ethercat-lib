@@ -3,11 +3,11 @@
  * @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @date       Tuesday, 10th May 2022 12:50:30 pm
- * @modified   Monday, 11th July 2022 2:07:23 pm
+ * @modified   Wednesday, 25th June 2025 3:14:46 pm
  * @project    ethercat-lib
  * @brief      Helper type traits related to module-defined types
- * 
- * 
+ *
+ *
  * @copyright Krzysztof Pierczyk © 2022
  */// ============================================================================================================================= */
 
@@ -16,8 +16,6 @@
 
 /* =========================================================== Includes =========================================================== */
 
-// External includes
-#include <range/v3/span.hpp>
 // Private includes
 #include "ethercat/common/types/type.hpp"
 #include "ethercat/common/types/traits/type_traits.hpp"
@@ -31,7 +29,7 @@ namespace ethercat::common::types::traits {
 /**
  * @brief Helper type traits describing supported CoE types
  * @details Each specialization of traits struucture contains:
- * 
+ *
  *    - type            : type for which traits has been specialized
  *    - value_type      : C++ type used to represent the type (except for Structural type)
  *    - value_type_name : name of the C++ type (except for Structural type)
@@ -39,29 +37,29 @@ namespace ethercat::common::types::traits {
  *    - bitsize         : size of the EtherCAT type in bits (except for Structural type)
  *    - names           : list of human-readable names of the EtherCAT type
  *    - coe_names       : list of CoE-specific names of the EtherCAT type (except for Structural type)
- * 
+ *
  * @tparam type_id_id
  *    ID of the type to be described
  */
 template<auto type_id>
-struct TypeTraits : 
-    public details::TypeTraits<type_id> 
+struct TypeTraits :
+    public details::TypeTraits<type_id>
 { };
 
 /**
  * @brief Type alias template providing default C++ that can be used to represent EtherCAT
  *    builtin type of the given @p type_id and given @p arity
- * 
- * @tparam type_id 
+ *
+ * @tparam type_id
  *    ID of the target EtherCAT builtin type
- * @tparam arity 
+ * @tparam arity
  *   arity of the target type ( @c 0 for scalar type )
  */
 template<auto type_id, std::size_t arity = 0>
 using TypeRepresentation = details::TypeRepresentation<type_id, arity>;
 
 /**
- * @brief Helper meta-function converting @ref Type::ID enumeration into index of the corresponding 
+ * @brief Helper meta-function converting @ref Type::ID enumeration into index of the corresponding
  *    @ref Value alternative
  */
 template<auto type_id>
@@ -72,10 +70,10 @@ constexpr std::size_t TypeIndex = utilities::to_underlying(type_id);
 /**
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * 
- * @param type_id 
+ *
+ * @param type_id
  *    CoE type ID
- * @returns 
+ * @returns
  *    human-readable name of the C++ type used to represent EtherCAT type with the fiven @p type_id
  */
 template<typename TypeIdEnum,
@@ -83,14 +81,14 @@ template<typename TypeIdEnum,
 inline constexpr std::string_view value_type_name(TypeIdEnum type_id);
 
 /**
- * @tparam N 
+ * @tparam N
  *    index of the name variant to be returns (for types with multiple names)
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * 
- * @param type_id 
+ *
+ * @param type_id
  *    CoE type ID
- * @returns 
+ * @returns
  *    human-readable name of the EtherCAT type with the fiven @p type_id
  */
 template<std::size_t N = 0, typename TypeIdEnum,
@@ -100,10 +98,10 @@ inline constexpr std::string_view name(TypeIdEnum type_id);
 /**
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * @param type_id 
+ * @param type_id
  *    CoE type ID
- * 
- * @returns 
+ *
+ * @returns
  *    array of human-readable names of the EtherCAT type with the fiven @p type_id
  */
 template<typename TypeIdEnum,
@@ -111,14 +109,14 @@ template<typename TypeIdEnum,
 inline constexpr auto names(TypeIdEnum type_id);
 
 /**
- * @tparam N 
+ * @tparam N
  *    index of the name variant to be returns (for types with multiple names)
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * @param type_id 
+ * @param type_id
  *    CoE type ID
- * 
- * @returns 
+ *
+ * @returns
  *    human-readable CoE name of the EtherCAT type with the fiven @p type_id
  */
 template<std::size_t N = 0, typename TypeIdEnum,
@@ -128,10 +126,10 @@ inline constexpr std::string_view coe_name(TypeIdEnum type_id);
 /**
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * @param type_id 
+ * @param type_id
  *    CoE type ID
- * 
- * @returns 
+ *
+ * @returns
  *    array of human-readable CoE names of the EtherCAT type with the fiven @p type_id
  */
 template<typename TypeIdEnum,
@@ -141,10 +139,10 @@ inline constexpr auto coe_names(TypeIdEnum type_id);
 /**
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * @param type_id 
+ * @param type_id
  *    CoE type ID
- * 
- * @returns 
+ *
+ * @returns
  *    byte size of the EtherCAT type with the fiven @p type_id
  */
 template<typename TypeIdEnum,
@@ -154,10 +152,10 @@ inline constexpr std::size_t bytesize(TypeIdEnum type_id);
 /**
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
- * @param type_id 
+ * @param type_id
  *    CoE type ID
- * 
- * @returns 
+ *
+ * @returns
  *    bit size of the EtherCAT type with the fiven @p type_id
  */
 template<typename TypeIdEnum,
@@ -166,7 +164,7 @@ inline constexpr std::size_t bitsize(TypeIdEnum type_id);
 
 /**
  * @brief Converts runtime object @p type to it's corresponding index
- * 
+ *
  * @tparam TypeIdEnum
  *    type of the type ID enumeration
  */

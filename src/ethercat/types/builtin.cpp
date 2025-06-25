@@ -3,10 +3,10 @@
  * @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
  * @date       Monday, 9th May 2022 6:02:53 pm
- * @modified   Monday, 11th July 2022 2:07:23 pm
+ * @modified   Wednesday, 25th June 2025 3:17:39 pm
  * @project    ethercat-lib
  * @brief      Definitions of methods of the Type type describing type of the CoE object at runtime
- * 
+ *
  * @copyright Krzysztof Pierczyk © 2022
  */// ============================================================================================================================= */
 
@@ -48,7 +48,7 @@ std::optional<BuiltinType> BuiltinType::parse(std::string_view type_string) {
 
             // If non-string type is matched, check if whole string matches
             if(i != common::utilities::to_underlying(ID::String)) {
-                
+
                 // Iterate over possible types
                 for(const auto &name : possible_name) {
                     // If name matches, return
@@ -72,7 +72,7 @@ std::optional<BuiltinType> BuiltinType::parse(std::string_view type_string) {
                         if(size_spec_string.front() != '(' or size_spec_string.back() != ')')
                             return std::optional<BuiltinType>{ };
 
-                        std::size_t size;
+                        std::size_t size { };
 
                         // Parse number substring
                         auto size_string = size_spec_string.substr(1, size_spec_string.size() - 1);
@@ -80,7 +80,7 @@ std::optional<BuiltinType> BuiltinType::parse(std::string_view type_string) {
                         // If so, try to parse size
                         try { std::from_chars(
                             size_string.data(), size_string.data() + size_string.size(), size
-                        ); } 
+                        ); }
                         /// On error, return
                         catch(...) { return std::optional<BuiltinType>{ }; }
 
@@ -111,7 +111,7 @@ std::optional<BuiltinType> BuiltinType::parse(std::string_view type_string) {
         std::size_t arity;
 
         /// Get type's arity
-        try { arity = static_cast<std::size_t>(std::stoi(match[1])); } 
+        try { arity = static_cast<std::size_t>(std::stoi(match[1])); }
         /// On error, return
         catch(...) { return std::optional<BuiltinType>{ }; }
 
@@ -125,9 +125,9 @@ std::optional<BuiltinType> BuiltinType::parse(std::string_view type_string) {
         base->arity = arity;
         // Return result
         return *base;
-        
+
     }
-    
+
     // Otherwise, try to parse scalar type
     auto base = parse_base(type_string);
     // If parsing failed, return empty

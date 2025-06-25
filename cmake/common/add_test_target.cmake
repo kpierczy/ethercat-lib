@@ -3,11 +3,11 @@
 # @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @date       Monday, 11th July 2022 3:00:31 pm
-# @modified   Monday, 11th July 2022 4:20:19 pm
+# @modified   Wednesday, 25th June 2025 3:21:02 pm
 # @project    ethercat-lib
 # @brief      Definition of the add_test_target() macro
-# 
-# 
+#
+#
 # @copyright Krzysztof Pierczyk © 2022
 # ====================================================================================================================================
 
@@ -21,6 +21,12 @@ else()
     include(${CMAKE_SOURCE_DIR}/cmake/ros/add_ament_test.cmake)
 endif()
 
+# ========================================================== Configuration ========================================================= #
+
+if(NOT ${ROS_BUILD})
+    enable_testing()
+endif()
+
 # =========================================================== Definitions ========================================================== #
 
 # ----------------------------------------------------------------------------------
@@ -29,19 +35,19 @@ endif()
 #
 # @param target [NAME]
 #    target name
-# @param SRC_FILES [PATHS...] 
+# @param SRC_FILES [PATHS...]
 #    list of source files
-# @param COMMAND_SUFFIX [STR] 
+# @param COMMAND_SUFFIX [STR]
 #    test run command suffix
-# @param DEPENDENCIES [NAMES...] 
+# @param DEPENDENCIES [NAMES...]
 #    list of dependencies
-# @param ADDITIONAL_DEFINES [NAMES...] 
+# @param ADDITIONAL_DEFINES [NAMES...]
 #    additional compile-time defines for the test
-# @param ADDITIONAL_OPTIONS [NAMES...] 
+# @param ADDITIONAL_OPTIONS [NAMES...]
 #    additional compile-time options for the test
 # ----------------------------------------------------------------------------------
 macro(add_test_target target)
-    
+
     # -------------------------- Parse arguments -------------------------
 
     # Single-value arguments
@@ -77,18 +83,21 @@ macro(add_test_target target)
 
     # For standard CMake build
     if(NOT ${ROS_BUILD})
-    
+
+        add_standard_test(${target}
+            ${ARG_SRC_FILES}
+        )
 
     # For ROS2 package build
     else()
 
         ament_add_gtest(${target}
-        
+
             # Test sources
             ${ARG_SRC_FILES}
-        
+
             # Test-runner suffix (stop test-case after first failure)
-            ${ARG_COMMAND_SUFFIX}  
+            ${ARG_COMMAND_SUFFIX}
         )
 
     endif()

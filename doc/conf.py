@@ -3,11 +3,11 @@
 # @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @date       Monday, 23rd May 2022 11:52:34 pm
-# @modified   Monday, 11th July 2022 2:07:23 pm
+# @modified   Wednesday, 25th June 2025 3:23:34 pm
 # @project    ethercat-lib
 # @brief      Configuration file for the Sphinx documentation builder.
-# 
-# 
+#
+#
 # @copyright Krzysztof Pierczyk © 2022
 # ====================================================================================================================================
 
@@ -19,9 +19,9 @@ copyright = 'Krzysztof Pierczyk © 2022'
 author = 'Krzysztof Pierczyk'
 
 # The short X.Y version
-version = '1.0'
+version = '1.1'
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = '1.1.0'
 
 # ====================================================== General configuration ===================================================== #
 
@@ -103,12 +103,12 @@ latex_elements = {
 
     # Latex figure (float) alignment
     # 'figure_align': 'htbp',
-    
+
 }
 
 # ----------------------------------------------------------------------------------
 # Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,  author, documentclass [howto, manual, 
+# (source start file, target name, title,  author, documentclass [howto, manual,
 # or own class]).
 # ----------------------------------------------------------------------------------
 latex_documents = [ (master_doc, 'project.tex', project, author, 'manual') ]

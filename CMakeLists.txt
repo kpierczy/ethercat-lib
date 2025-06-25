@@ -3,11 +3,11 @@
 # @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @date       Wednesday, 13th April 2021 12:43:42 am
-# @modified   Monday, 11th July 2022 9:20:08 pm
+# @modified   Wednesday, 25th June 2025 3:23:26 pm
 # @project    ethercat-lib
 # @brief      Build rules for C++ EtherCAT library
-#    
-#    
+#
+#
 # @copyright Krzysztof Pierczyk © 2022
 # ====================================================================================================================================
 
@@ -16,7 +16,7 @@
 # CMake version
 cmake_minimum_required(VERSION 3.5)
 # Project header
-project(ethercat-lib VERSION 1.0.0)
+project(ethercat-lib VERSION 1.1.0)
 
 # ========================================================== Configuration ========================================================= #
 
@@ -39,7 +39,7 @@ endif()
 # ROS environment
 if(DEFINED ENV{ROS_DISTRO})
     set(ROS_PRESENT ON)
-else()    
+else()
     set(ROS_PRESENT OFF)
 endif()
 
@@ -80,7 +80,7 @@ set(SRC_FILES
 
 # Dependencies
 set(LIB_DEPENDENCIES
-    Boost
+    boost::boost
 )
 
 # ============================================================= Targets ============================================================ #
@@ -96,7 +96,7 @@ add_library_target(
 
     # Dependencies
     DEPENDENCIES ${LIB_DEPENDENCIES}
-    
+
 )
 
 # ============================================================= Package ============================================================ #
@@ -144,4 +144,6 @@ endif()
 
 # ============================================================== Build ============================================================= #
 
-ament_package()
+if(${ROS_BUILD})
+    ament_package()
+endif()

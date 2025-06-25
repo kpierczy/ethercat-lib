@@ -1,0 +1,28 @@
+*
+
+# Keep .vscode settings
+!.vscode/
+!.vscode/**
+# Keep CMake files
+!CMakeLists.txt
+!cmake/
+!cmake/**
+# Keep source files
+!include/
+!include/**
+!src/
+!src/**
+!tests/
+!tests/**
+# Keep docs
+!doc/
+!doc/**
+# Keep spikes
+!spike/
+!spike/**
+# Keep project files
+!.gitignore
+!license
+!package.xml
+!readme.md
+!conanfile.py

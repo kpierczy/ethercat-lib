@@ -3,18 +3,18 @@
 # @author     Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @maintainer Krzysztof Pierczyk (krzysztof.pierczyk@gmail.com)
 # @date       Thursday, 12th May 2022 11:27:46 pm
-# @modified   Monday, 11th July 2022 2:44:40 pm
+# @modified   Wednesday, 25th June 2025 3:08:25 pm
 # @project    ethercat-lib
 # @brief      Definition of the add_standard_library() macro
-#    
-#    
+#
+#
 # @copyright Krzysztof Pierczyk © 2022
 # ====================================================================================================================================
 
 # ============================================================ Includes ============================================================ #
 
 # Include common utilities
-include(${CMAKE_LIST_DIR}/cmake/common/arguments.cmake)
+include(${CMAKE_SOURCE_DIR}/cmake/common/arguments.cmake)
 
 # =========================================================== Definitions ========================================================== #
 
@@ -22,9 +22,9 @@ include(${CMAKE_LIST_DIR}/cmake/common/arguments.cmake)
 # @brief Adds shared library target providing proper exports and installs for the
 #    declared target
 #
-# @param SKIP_INCLUDES_INSTALL 
+# @param SKIP_INCLUDES_INSTALL
 #    if given, include directory will not be installed
-# @param SKIP_EXPORT 
+# @param SKIP_EXPORT
 #    if given, target will not be exported and just installed
 # @param LIBRARY_NAME [NAME]
 #    name of the library target
@@ -42,7 +42,7 @@ include(${CMAKE_LIST_DIR}/cmake/common/arguments.cmake)
 #    list of dependencies to be passed to `target_link_libraries()`
 # ----------------------------------------------------------------------------------
 macro(add_standard_library)
-    
+
     # -------------------------- Parse arguments -------------------------
 
     # Flag arguments
@@ -79,7 +79,7 @@ macro(add_standard_library)
     # ----------------------- Set default arguments ----------------------
 
     # Set default library type
-    parse_arg(LIBRARY_TYPE "SHARED")   
+    parse_arg(LIBRARY_TYPE "SHARED")
     # Set default dependencies type
     strip_arg(TARGET_DEPENDENCIES_TYPE)
 
@@ -88,8 +88,8 @@ macro(add_standard_library)
         set(INCLUDE_TYPE "INTERFACE")
     else()
         set(INCLUDE_TYPE "PUBLIC")
-    endif()    
-    
+    endif()
+
     # Optionally override dependencies type
     if(LIBRARY_TYPE STREQUAL "INTERFACE")
         set(TARGET_DEPENDENCIES_TYPE "INTERFACE")
@@ -97,7 +97,7 @@ macro(add_standard_library)
 
     # ------------------------- Validate arguments -----------------------
 
-    # Check if target name has been given 
+    # Check if target name has been given
     if(NOT ARG_LIBRARY_NAME)
         message(FATAL_ERROR "add_standard_library() must be invoked with shared library name")
     endif()

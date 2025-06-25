@@ -5,10 +5,10 @@
     <!-- Package's name -->
     <name>ethercat-lib</name>
     <!-- Package's version -->
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <!-- Package's description -->
     <description>
-    
+
     C++ library providing implementation of the subset of abstraction defined by the EDP (EtherCAT Device Protocol)
 
     </description>
@@ -18,7 +18,7 @@
     <maintainer email="krzysztof.pierczyk@gmail.com">Krzysiek Pierczyk</maintainer>
     <!-- Package's license -->
     <license>MIT</license>
-    
+
     <!-- Build tool dependencies -->
     <buildtool_depend>ament_cmake</buildtool_depend>
     <!-- Package's build export dependencies (external libraries) -->

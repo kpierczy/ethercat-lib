@@ -1,7 +1,7 @@
 # Welcome to the ethercat-lib library!
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![version](https://img.shields.io/badge/version-1.0.0-blue)
+![version](https://img.shields.io/badge/version-1.1.0-blue)
 
 The [EtherCAT](https://en.wikipedia.org/wiki/EtherCAT) is an Ethernet-based *fieldbus system* characterized by very low communication jitter
 suitable for real-time applications. The system standard provides specification for the whole communication stack (in ISO/OSI model sense)
@@ -10,14 +10,14 @@ the common use case involves:
 
   - configuring the bus using automatically-generated ENI (*EtherCAT Network Informations*) files that are decoded and executed
     directly by the master interface PCI card at bus start
-  - utilizing the [CANopen](https://en.wikipedia.org/wiki/CANopen) device model (described by the *CoE*, *CANopen over EtherCAT* protocol) 
+  - utilizing the [CANopen](https://en.wikipedia.org/wiki/CANopen) device model (described by the *CoE*, *CANopen over EtherCAT* protocol)
     to provide runtime-dependent configuration of the slave devices and cyclically exchange process data
-    
+
 This simple two-step scenario can turn out to be surprisingly tough to implement taking into account all catches introduced by the EtherCAT
 including bit-aligned process data storage or serialization/deserialization of application-space data structures.
 
 The **ethercat-lib** aims to implement main utilities that are required to quickly develop and deploy EtherCAT-based Master solutions without
-wrapping your mind around too low-level topics. The library takes advantage of the modern C++ approach (C++17) to implement convenient APIs 
+wrapping your mind around too low-level topics. The library takes advantage of the modern C++ approach (C++17) to implement convenient APIs
 that are not only easy to remember and use but also tend to maximize optimization capabilities of modern compilers. Easy? But how easy?
 
 ```cpp
@@ -76,19 +76,19 @@ int main() {
 
 Cool? Quite cool, if you asked me 😃. But the final opinion is yours 😉. For those who need something more to decide:
 
-  - You've written code that tries to *write* PDO object via *input* proxy or something similar? 
+  - You've written code that tries to *write* PDO object via *input* proxy or something similar?
     - No problem! The library will not let you do stupid things that can be detected at compile time!
   - Your ENI file describes object X as `uint32_t`-typed, but your code tries to implicitly interpret it as `int32_t`?
     - Don't worry! I/O routines will throw exception with a verbose message which tells you what's wrong!
-  - Oh, you cannot afford exceptions on the critical path? 
+  - Oh, you cannot afford exceptions on the critical path?
     - Just modify library config to disable them 😉
   - Okay, fine, but I need the library to support a custom structural EtherCAT type to represent messages queue for my
-    CAN bridge... 
+    CAN bridge...
     - We've covered you too! Just define a custom *translator class* suitable for your needs!
   - But why translator *type*? Why not *function*? I don't need any *context data* to serialize my structure. Why do I have
-    to pay additional memory for things that I don't use? 
+    to pay additional memory for things that I don't use?
     - Don't worry. Translation routines can be static. I know that you probably don't need such data. But if - for some reason - you do,
-    you can!  
+    you can!
   - Fine, you support bit-aligned PDO serialization. But it's an additional computation cost. My ENI generator is smart
     enough to *don't* generate bit-aligned entries
     - Again, just modify library config and bit-aligned data support will disappear 😃
@@ -119,10 +119,10 @@ protected: /* Protected EtherCAT common methods (implementation) */
 
     /// Reads current state of the slave device in the ESM (EtherCAT slave machine)
     inline State get_state_impl(std::chrono::milliseconds timeout);
-    
+
     /// Requestes state change of the slave device in the ESM (EtherCAT slave machine)
     inline void set_state_impl(State state, std::chrono::milliseconds timeout);
-    
+
 protected: /* Protected EtherCAT I/O methods (implementation) */
 
     /// Reads Input Process Data Image from the bus
@@ -145,7 +145,7 @@ protected: /* Protected EtherCAT common methods (implementations) */
 
     /// Reads current state of the slave device in the ESM (EtherCAT slave machine)
     State get_state_impl(std::chrono::milliseconds timeout);
-    
+
     /// Requestes state change of the slave device in the ESM (EtherCAT slave machine)
     void set_state_impl(State state, std::chrono::milliseconds timeout);
 
@@ -168,7 +168,7 @@ protected: /* Protected implementation methods (SDO) */
         std::chrono::milliseconds timeout,
         bool complete_access
     );
-    
+
     /// Uploads SDO with the given address into the @p data buffer
     void upload_sdo(
         uint16_t index,
@@ -184,7 +184,7 @@ protected: /* Protected implementation methods (SDO) */
 These are rather basic interfaces that you could expect from hardware-specific implementations of the bus-support library. Notice that both classes
 are implemented as derivations of abstract interfaces leveraging [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) design
 pattern. Thanks to this approach the compiler can see-through your specific implementation of the library and provide better optimization than
-e.g. when hardware-specific routines would be implemented as pointers to functions (which is a common pattern in low-level bus-support libraries). 
+e.g. when hardware-specific routines would be implemented as pointers to functions (which is a common pattern in low-level bus-support libraries).
 
 # Usage
 
@@ -198,7 +198,7 @@ The library ships with a standard CMake scripts that lets you build it in a simp
         --build <builddir> \
         --target install
 
-You can also just add the project as a subdirectory of your project 
+You can also just add the project as a subdirectory of your project
 
     add_dubsirectory(<libdir>)
 
@@ -215,10 +215,29 @@ with the [colcon](https://colcon.readthedocs.io/en/released/index.html) utility.
 
 from your workspace directory to build it.
 
+## Conan package
+
+The package can be build as a standard Conan package with all dependencies being fetchable from the official `conancenter` repository. To build the
+package, you need to `pip install conan` and then run the following commands:
+
+```bash
+conan create <path-to-project-dir>
+```
+
+After a while your Conan cache should be populated with the built package and you can use it either from other Conan recipes or deploy it to connect built
+library to you native CMake project by:
+
+```bash
+conan install --requires ethercat-lib/1.1.0 \
+    --envs-generation false \
+    --build missing \
+    --deployer full_deploy \
+    --deployer-folder <path-to-install-dir>
+```
 
 # Afterword
 
-The **ethercat-lib** has been developed as a part of my engineering thesis. It has been tested in a real-world robotic system utilizing PCIe 
+The **ethercat-lib** has been developed as a part of my engineering thesis. It has been tested in a real-world robotic system utilizing PCIe
 Master interface card from [Hilscher](https://www.hilscher.com/). Not only the source code of the library is well-documented but also UML diagrams
 of main classes and conceptual overview of the library are provided. However, due to being developed single-handedly, the library may suffer
 from bugs that has not been covered by the current test suite or detected during deployment. If you use the library and:
